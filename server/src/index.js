@@ -3,6 +3,7 @@ const express = require('express')
 const { Sequelize, Op, DataTypes } = require('sequelize');
 
 const model = require('./model')
+const { normalizeUser, normalizeToken } = require('./normalize')
 
 const { DB_HOST, DB_USERNAME, DB_PWD, DB_NAME } = process.env;
 
@@ -46,7 +47,7 @@ app.post('/auth', (req, res) => {
       .then((foundUser) => {
         if (foundUser) {
           AuthToken.create({ userId: foundUser.id })
-          .then(({ token, expiration, createdAt }) => res.send({ token, expiration, createdAt }))
+          .then((token) => res.send(normalizeToken(token)))
           .catch((e) => sendInternalError(res, e))
         } else res.sendStatus(403)
       }).catch((e) => sendInternalError(res, e))
@@ -58,7 +59,7 @@ app.get('/user', (req, res) => {
     .then((valid) => {
         if (valid) {
           User.findAll()
-              .then((users) => res.send(users))
+              .then((users) => res.send(users.map(normalizeUser)))
               .catch((e) => sendInternalError(res, e));
         } else {
           res.sendStatus(403)
@@ -76,14 +77,7 @@ app.get('/user/me', (req, res) => {
               required: true,
               where: { 'token': extractToken(req) }
             }]
-          }).then(
-              ({ id, email, createdAt, tokens }) => res.send({
-                id,
-                email,
-                createdAt,
-                tokens: tokens.map(({token, expiration, createdAt }) => ({ token, expiration, createdAt }))
-              })
-          )
+          }).then( (user) => res.send(normalizeUser(user)))
         } else res.sendStatus(403)
     }).catch(e => sendInternalError(res, e));
 })
@@ -97,8 +91,7 @@ app.get('/user/:id', (req, res) => {
           User.findOne({ where: { id }})
           .then((user) => {
             if (user) {
-              const { id, email, createdAt } = user;
-              res.send({ id, email, createdAt })
+              res.send(normalizeUser(user))
             } else res.sendStatus(404)
           }).catch((e) => sendInternalError(res, e))
         } else res.sendStatus(400)
