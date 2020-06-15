@@ -67,6 +67,20 @@ app.get('/user', (req, res) => {
     }).catch((e) => sendInternalError(res, e))
 })
 
+app.post('/user', (req, res) => {
+  const { email, pwd } = req.headers
+  extractAndValidateToken(req)
+  .then((valid) => {
+    if (valid) {
+      if (email && pwd) {
+        User.create({ email, pwd })
+          .then((user) => res.send(normalizeUser(user)))
+          .catch((e) => sendInternalError(res, e))
+      } else res.sendStatus(400)
+    } else  res.sendStatus(403)
+  }).catch((e) => sendInternalError(res, e))
+})
+
 app.get('/user/me', (req, res) => {
   extractAndValidateToken(req)
     .then((valid) => {
