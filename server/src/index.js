@@ -66,6 +66,27 @@ app.get('/user', (req, res) => {
     }).catch((e) => sendInternalError(res, e))
 })
 
+app.get('/user/me', (req, res) => {
+  extractAndValidateToken(req)
+    .then((valid) => {
+        if (valid) {
+          User.findOne({
+            include: [{
+              model: AuthToken,
+              required: true,
+              where: { 'token': extractToken(req) }
+            }]
+          }).then(
+              ({ email, createdAt, tokens }) => res.send({
+                email,
+                createdAt,
+                tokens: tokens.map(({token, expiration, createdAt }) => ({ token, expiration, createdAt }))
+              })
+          )
+        } else res.sendStatus(403)
+    }).catch(e => sendInternalError(res, e));
+})
+
 app.listen(port, () => {
   Promise.all([
       sequelize.authenticate(),
