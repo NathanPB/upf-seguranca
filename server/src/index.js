@@ -87,6 +87,21 @@ app.post('/user', (req, res) => {
   }).catch((e) => sendInternalError(res, e))
 })
 
+app.delete('/user/:id', (req, res) => {
+  const { id } = req.params;
+  extractAndValidateToken(req)
+  .then((valid) => {
+    if (id && !isNaN(id)) {
+      // Makes the user able to alter only his own password if the pwd parameter is passed
+      if (valid && parseInt(id) === valid) {
+        User.destroy({ where: { id: parseInt(id) } })
+        .then(() => res.sendStatus(200))
+        .catch((e) => sendInternalError(res, e))
+      } else  res.sendStatus(403)
+    } else res.sendStatus(400)
+  }).catch((e) => sendInternalError(res, e))
+})
+
 app.put('/user/:id', (req, res) => {
   const { id } = req.params;
   const { email, pwd } = req.headers;
