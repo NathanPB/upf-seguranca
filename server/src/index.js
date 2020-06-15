@@ -87,6 +87,26 @@ app.post('/user', (req, res) => {
   }).catch((e) => sendInternalError(res, e))
 })
 
+app.put('/user/:id', (req, res) => {
+  const { id } = req.params;
+  const { email, pwd } = req.headers;
+  extractAndValidateToken(req)
+  .then((valid) => {
+    if (email && id && !isNaN(id)) {
+      // Makes the user able to alter only his own password if the pwd parameter is passed
+      if (valid && (pwd ? parseInt(id) === valid : true)) {
+        let updatePayload = { email }
+        if (pwd) {
+          updatePayload = { ...updatePayload, pwd }
+        }
+        User.update(updatePayload, { where: { id: parseInt(id) } })
+          .then(() => res.sendStatus(200))
+          .catch((e) => sendInternalError(res, e))
+      } else  res.sendStatus(403)
+    } else res.sendStatus(400)
+  }).catch((e) => sendInternalError(res, e))
+})
+
 app.get('/user/me', (req, res) => {
   extractAndValidateToken(req)
     .then((valid) => {
