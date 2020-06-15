@@ -21,7 +21,7 @@ module.exports = (sequelize) => {
     }
   }, { sequelize, modelName: 'token' })
 
-  User.hasMany(AuthToken)
+  User.AuthToken = User.hasMany(AuthToken)
 
   return {
     User, AuthToken
