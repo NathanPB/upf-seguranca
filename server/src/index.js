@@ -87,6 +87,24 @@ app.get('/user/me', (req, res) => {
     }).catch(e => sendInternalError(res, e));
 })
 
+app.get('/user/:id', (req, res) => {
+  const { id } = req.params
+  extractAndValidateToken(req)
+    .then((valid) => {
+      if (valid) {
+        if (id) {
+          User.findOne({ where: { id }})
+          .then((user) => {
+            if (user) {
+              const { id, email, createdAt } = user;
+              res.send({ id, email, createdAt })
+            } else res.sendStatus(404)
+          }).catch((e) => sendInternalError(res, e))
+        } else res.sendStatus(400)
+      } else res.sendStatus(403)
+    }).catch((e) => sendInternalError(res, e))
+})
+
 app.listen(port, () => {
   Promise.all([
       sequelize.authenticate(),
