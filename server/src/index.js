@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express')
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 const model = require('./model')
 
@@ -16,6 +16,23 @@ const { User, AuthToken } = model(sequelize)
 
 const app = express();
 const port = process.env.PORT ?? 8080
+
+const extractAndValidateToken = async (req) => validateToken(extractToken(req))
+
+const extractToken = (req) => req.header('Authorization')
+
+const validateToken = async (token) => {
+  if (token) {
+    return !!AuthToken.count({
+      where: {
+        token,
+        expiration: {
+          [Op.lte]: new Date()
+        }
+      }
+    })
+  } else return false
+}
 
 app.post('/auth', (req, res) => {
   const [email, pwd] = String(req.header('Authorization')).split(" ");
@@ -35,6 +52,25 @@ app.post('/auth', (req, res) => {
         console.error(e)
       })
   } else res.sendStatus(400)
+})
+
+app.get('/user', (req, res) => {
+  extractAndValidateToken(req)
+    .then((valid) => {
+        if (valid) {
+          User.findAll()
+              .then((users) => res.send(users))
+              .catch((e) => {
+                res.sendStatus(500);
+                console.error(e)
+              });
+        } else {
+          res.sendStatus(403)
+        }
+    }).catch((e) => {
+      res.sendStatus(500)
+      console.error(e)
+    })
 })
 
 app.listen(port, () => {
