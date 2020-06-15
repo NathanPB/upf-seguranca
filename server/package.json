@@ -1,0 +1,24 @@
+{
+  "name": "projet-seguranca-server",
+  "version": "1.0.0",
+  "description": "Projeto desenvolvido para a aula de Segurança em Desenvolvimento de Sistemas",
+  "main": "src/index.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NathanPB/upf-seguranca.git"
+  },
+  "author": "Nathan P. Bombana<nathan.pbombana@gmail.com>(https://github.com/NathanPB/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NathanPB/upf-seguranca/issues"
+  },
+  "homepage": "https://github.com/NathanPB/upf-seguranca#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  }
+}
