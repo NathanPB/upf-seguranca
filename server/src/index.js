@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express')
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize, Op, DataTypes } = require('sequelize');
 
 const model = require('./model')
 
@@ -23,11 +23,11 @@ const extractToken = (req) => req.header('Authorization')
 
 const validateToken = async (token) => {
   if (token) {
-    return !!AuthToken.count({
+    return !! await AuthToken.count({
       where: {
         token,
         expiration: {
-          [Op.lte]: new Date()
+          [Op.gte]: new Date()
         }
       }
     })
