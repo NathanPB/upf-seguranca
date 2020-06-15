@@ -77,7 +77,8 @@ app.get('/user/me', (req, res) => {
               where: { 'token': extractToken(req) }
             }]
           }).then(
-              ({ email, createdAt, tokens }) => res.send({
+              ({ id, email, createdAt, tokens }) => res.send({
+                id,
                 email,
                 createdAt,
                 tokens: tokens.map(({token, expiration, createdAt }) => ({ token, expiration, createdAt }))
