@@ -34,6 +34,11 @@ const validateToken = async (token) => {
   } else return false
 }
 
+const sendInternalError = (res, e) => {
+  req.sendStatus(500);
+  console.error(e)
+}
+
 app.post('/auth', (req, res) => {
   const [email, pwd] = String(req.header('Authorization')).split(" ");
   if (email && pwd) {
@@ -42,15 +47,9 @@ app.post('/auth', (req, res) => {
         if (foundUser) {
           AuthToken.create({ userId: foundUser.id })
           .then(({ token, expiration, createdAt }) => res.send({ token, expiration, createdAt }))
-          .catch((e) => {
-            res.send(500)
-            console.error(e)
-          })
+          .catch((e) => sendInternalError(res, e))
         } else res.sendStatus(403)
-      }).catch((e) => {
-        res.send(500)
-        console.error(e)
-      })
+      }).catch((e) => sendInternalError(res, e))
   } else res.sendStatus(400)
 })
 
@@ -60,17 +59,11 @@ app.get('/user', (req, res) => {
         if (valid) {
           User.findAll()
               .then((users) => res.send(users))
-              .catch((e) => {
-                res.sendStatus(500);
-                console.error(e)
-              });
+              .catch((e) => sendInternalError(res, e));
         } else {
           res.sendStatus(403)
         }
-    }).catch((e) => {
-      res.sendStatus(500)
-      console.error(e)
-    })
+    }).catch((e) => sendInternalError(res, e))
 })
 
 app.listen(port, () => {
