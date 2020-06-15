@@ -35,7 +35,7 @@ const validateToken = async (token) => {
 }
 
 const sendInternalError = (res, e) => {
-  req.sendStatus(500);
+  res.sendStatus(500);
   console.error(e)
 }
 
