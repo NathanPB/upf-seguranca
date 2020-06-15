@@ -24,14 +24,20 @@ const extractToken = (req) => req.header('Authorization')
 
 const validateToken = async (token) => {
   if (token) {
-    return !! await AuthToken.count({
-      where: {
-        token,
-        expiration: {
-          [Op.gte]: new Date()
-        }
-      }
+    const user = await User.findOne({
+      include: [
+        {
+          model: AuthToken,
+          required: true,
+          where: {
+            token,
+            expiration: {
+              [Op.gte]: new Date()
+            }
+          }
+        }]
     })
+    return user ? user.id : false
   } else return false
 }
 
