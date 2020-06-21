@@ -28,6 +28,12 @@ function App() {
       .catch(() => setTokenValid(false))
   }, [ token ]);
 
+  React.useEffect((lastToken) => {
+    if (token && !isTokenValid && lastToken) {
+      setToken('')
+    }
+  }, [ token, isTokenValid ])
+
   function router() {
     return (
       <BrowserRouter>
