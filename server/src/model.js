@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
     },
     expiration: {
       type: DataTypes.DATE,
-      defaultValue: new Date(+new Date() + 600000)
+      defaultValue: () => new Date(+new Date() + 600000)
     }
   }, { sequelize, modelName: 'token' })
 
