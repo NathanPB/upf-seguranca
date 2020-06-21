@@ -44,13 +44,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-
-        <section>
-          { isTokenValid ? router() : <LoginScreen onLogin={setToken} /> }
-        </section>
-      </header>
+      { isTokenValid ? router() : <LoginScreen onLogin={setToken} /> }
     </div>
   );
 }

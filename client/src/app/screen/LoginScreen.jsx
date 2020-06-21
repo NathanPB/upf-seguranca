@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import sha256 from 'crypto-js/sha256';
 
 import { InputText } from 'primereact/inputtext';
-import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 
 import { auth } from '../../services/api';
+import logo from '../../logo.svg';
+
+import Styles from './LoginScreen.module.scss';
 
 export default function LoginScreen({ onLogin }) {
 
@@ -30,8 +32,12 @@ export default function LoginScreen({ onLogin }) {
   }
 
   return (
-    <div>
-      <span className="p-float-label">
+    <>
+      <header>
+        <img src={logo} className="App-logo" alt="logo" />
+      </header>
+      <section className={Styles.Form}>
+        <span className="p-float-label">
         <InputText
           id="email"
           type="email"
@@ -41,22 +47,23 @@ export default function LoginScreen({ onLogin }) {
         <label htmlFor="email">Email</label>
       </span>
 
-      <span className="p-float-label" style={{ margin: '1em 0' }}>
-        <Password
+        <span className="p-float-label" style={{ margin: '1em 0' }}>
+        <InputText
           id="pwd"
+          type="password"
           value={pwd}
           onChange={(e) => setPwd(e.target.value)}
         />
         <label htmlFor="pwd">Password</label>
       </span>
 
-      <Button
-        label="Login"
-        onClick={sendForm}
-        icon="pi pi-angle-right"
-        style={{ width: '100%' }}
-      />
-    </div>
+        <Button
+          label="Login"
+          onClick={sendForm}
+          icon="pi pi-angle-right"
+        />
+      </section>
+    </>
   )
 }
 
