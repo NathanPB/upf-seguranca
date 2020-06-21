@@ -18,12 +18,7 @@ export default function HomeScreen({ api }) {
       .catch(console.error)
 
     api.users()
-      .then(({ data }) => setUsers(
-        JSON.parse(data)
-          .map(({ email, createdAt }) => ({
-            email, createdAt: new Date(createdAt)
-          }))
-    ))
+      .then(({ data }) => setUsers(JSON.parse(data)))
       .catch(console.error)
   }, [])
 
