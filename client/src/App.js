@@ -1,23 +1,47 @@
 import React from 'react';
+import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+
 import logo from './logo.svg';
 import './App.css';
+import LoginScreen from './app/screen/LoginScreen';
+import HomeScreen from './app/screen/HomeScreen';
+
+import { create } from './services/api'
 
 function App() {
+
+  const [token, setToken] = React.useState('')
+
+  async function checkTokenValid() {
+    return token && await create(token).isTokenValid()
+  }
+
+  const [isTokenValid, setTokenValid] = React.useState(false);
+
+  React.useEffect(() => {
+    checkTokenValid()
+      .then(setTokenValid)
+      .catch(() => setTokenValid(false))
+  }, [ token ]);
+
+  function router() {
+    return (
+      <BrowserRouter>
+        <Route path="/">
+          <HomeScreen token={token}/>
+        </Route>
+      </BrowserRouter>
+    )
+  }
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+
+        <section>
+          { isTokenValid ? router() : <LoginScreen onLogin={setToken} /> }
+        </section>
       </header>
     </div>
   );
