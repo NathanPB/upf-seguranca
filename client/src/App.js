@@ -1,5 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
+
+import 'primereact/resources/themes/nova-dark/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 import logo from './logo.svg';
 import './App.css';
