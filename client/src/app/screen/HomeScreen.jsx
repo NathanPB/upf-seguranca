@@ -1,7 +1,18 @@
 import React from 'react';
-import { Button } from 'primereact/button';
+import { Menubar } from 'primereact/menubar';
+
+import Styles from './HomeScreen.module.scss';
 
 export default function HomeScreen({ api }) {
+
+  const [me, setMe] = React.useState({});
+
+  // TODO find out why this is not automatically parsing the json string
+  React.useEffect(() => {
+    api.me()
+      .then(({ data }) => setMe(JSON.parse(data)))
+      .catch(console.error)
+  }, [])
 
   function handleRecheckToken() {
     api.isTokenValid()
@@ -10,12 +21,23 @@ export default function HomeScreen({ api }) {
       }).catch(console.error)
   }
 
+
+  const menuItems = [
+    {
+      label: 'Recheck Token',
+      icon: 'pi pi-refresh',
+      command: handleRecheckToken,
+      style: { background: 'var(--primaryColor)' }
+    }
+  ]
+
+  const { email } = me;
+
   return (
-    <>
-      <Button label="Re-check Token" onClick={handleRecheckToken}/>
-      <div>
-        Home
-      </div>
-    </>
+    <section className={Styles.HomeScreen}>
+      <Menubar model={menuItems}>
+        <span>Hello, {email}</span>
+      </Menubar>
+    </section>
   );
 }
