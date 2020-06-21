@@ -1,11 +1,21 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Button } from 'primereact/button';
 
+export default function HomeScreen({ api }) {
 
-export default function HomeScreen({ token }) {
+  function handleRecheckToken() {
+    api.isTokenValid()
+      .then((valid) => {
+        alert(valid ? "Your token still valid!" : "Your token is not valid anymore")
+      }).catch(console.error)
+  }
+
   return (
-    <div>
-      Home
-    </div>
+    <>
+      <Button label="Re-check Token" onClick={handleRecheckToken}/>
+      <div>
+        Home
+      </div>
+    </>
   );
 }

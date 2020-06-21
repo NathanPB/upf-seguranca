@@ -11,9 +11,19 @@ export const auth = (email, hashedPassword) => axios.post(`${baseURL}/auth`, und
   }
 })
 
-export const create = (token) => {
+export const create = (token, options) => {
+
+  const { onTokenInvalid } = options || {}
+
   const api = axios.create({
     baseURL,
+    transformResponse: (data) => {
+      if (data === 'Forbidden') {
+        onTokenInvalid({ token })
+      }
+
+      return data;
+    },
     headers: {
       Authorization: token
     }
@@ -36,5 +46,5 @@ export const create = (token) => {
 
   const getUser = (id) => api.get(`/user/${id}`)
 
-  return { api, me, isTokenValid, users, addUser, removeUser, editUser, getUser };
+  return { api, me, isTokenValid, users, addUser, removeUser, editUser, getUser, token };
 }

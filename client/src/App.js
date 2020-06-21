@@ -15,30 +15,28 @@ import { create } from './services/api'
 function App() {
 
   const [token, setToken] = React.useState('')
-
-  async function checkTokenValid() {
-    return token && await create(token).isTokenValid()
-  }
-
   const [isTokenValid, setTokenValid] = React.useState(false);
+
+  const api = create(token, {
+    onTokenInvalid: () => {
+      setTokenValid(false)
+      setToken('')
+    }
+  })
+
+  const checkTokenValid = React.useCallback(async () => token && await api.isTokenValid(), [ token, api ])
 
   React.useEffect(() => {
     checkTokenValid()
       .then(setTokenValid)
       .catch(() => setTokenValid(false))
-  }, [ token ]);
-
-  React.useEffect((lastToken) => {
-    if (token && !isTokenValid && lastToken) {
-      setToken('')
-    }
-  }, [ token, isTokenValid ])
+  }, [ token, checkTokenValid ]);
 
   function router() {
     return (
       <BrowserRouter>
         <Route path="/">
-          <HomeScreen token={token}/>
+          <HomeScreen api={api}/>
         </Route>
       </BrowserRouter>
     )
