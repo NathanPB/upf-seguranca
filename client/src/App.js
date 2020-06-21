@@ -5,7 +5,6 @@ import 'primereact/resources/themes/nova-dark/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
-import logo from './logo.svg';
 import './App.css';
 import LoginScreen from './app/screen/LoginScreen';
 import HomeScreen from './app/screen/HomeScreen';
