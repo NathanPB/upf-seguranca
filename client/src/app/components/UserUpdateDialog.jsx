@@ -60,7 +60,7 @@ export default function UserUpdateDialog({ me, userId, api, notify, onCancelled,
 
   const footer = <div className="p-clearfix" style={{ width: '100%' }}>
     <Button label="Save" icon="pi pi-save" onClick={handleEdit}/>
-    <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={handleDelete}/>
+    { me.id === userId && <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={handleDelete}/> }
   </div>
 
   const dialogBody = <div className="p-grid p-fluid">
