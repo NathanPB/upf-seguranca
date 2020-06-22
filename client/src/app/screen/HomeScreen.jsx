@@ -25,7 +25,6 @@ export default function HomeScreen({ api }) {
 
   React.useEffect(onNotified, [])
 
-  // TODO find out why this is not automatically parsing the json string
   function onNotified() {
     setEditing(undefined)
     setCreating(false);
