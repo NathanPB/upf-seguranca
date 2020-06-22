@@ -149,7 +149,7 @@ app.get('/user/me', (req, res) => {
               where: { 'token': extractToken(req) }
             }]
           }).then( (user) => res.send(normalizeUser(user)))
-        } else res.sendStatus(403)
+        } else res.sendStatus(401)
     }).catch(e => sendInternalError(res, e));
 })
 
