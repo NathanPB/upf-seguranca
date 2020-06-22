@@ -67,9 +67,7 @@ app.get('/user', (req, res) => {
           User.findAll()
               .then((users) => res.send(users.map(normalizeUser)))
               .catch((e) => sendInternalError(res, e));
-        } else {
-          res.sendStatus(403)
-        }
+        } else res.sendStatus(401)
     }).catch((e) => sendInternalError(res, e))
 })
 
@@ -83,7 +81,7 @@ app.post('/user', (req, res) => {
           .then((user) => res.send(normalizeUser(user)))
           .catch((e) => sendInternalError(res, e))
       } else res.sendStatus(400)
-    } else  res.sendStatus(403)
+    } else  res.sendStatus(401)
   }).catch((e) => sendInternalError(res, e))
 })
 
@@ -94,10 +92,12 @@ app.delete('/user/:id', (req, res) => {
     if (id && !isNaN(id)) {
       // Makes the user able to alter only his own password if the pwd parameter is passed
       if (valid && parseInt(id) === valid) {
-        User.destroy({ where: { id: parseInt(id) } })
-        .then(() => res.sendStatus(200))
-        .catch((e) => sendInternalError(res, e))
-      } else  res.sendStatus(403)
+        if (parseInt(id) === valid) {
+          User.destroy({ where: { id: parseInt(id) } })
+          .then(() => res.sendStatus(200))
+          .catch((e) => sendInternalError(res, e))
+        } else res.sendStatus(403)
+      } else  res.sendStatus(401)
     } else res.sendStatus(400)
   }).catch((e) => sendInternalError(res, e))
 })
@@ -110,14 +110,16 @@ app.put('/user/:id', (req, res) => {
     if (email && id && !isNaN(id)) {
       // Makes the user able to alter only his own password if the pwd parameter is passed
       if (valid && (pwd ? parseInt(id) === valid : true)) {
-        let updatePayload = { email }
-        if (pwd) {
-          updatePayload = { ...updatePayload, pwd }
-        }
-        User.update(updatePayload, { where: { id: parseInt(id) } })
+        if (pwd ? parseInt(id) === valid : true) {
+          let updatePayload = { email }
+          if (pwd) {
+            updatePayload = { ...updatePayload, pwd }
+          }
+          User.update(updatePayload, { where: { id: parseInt(id) } })
           .then(() => res.sendStatus(200))
           .catch((e) => sendInternalError(res, e))
-      } else  res.sendStatus(403)
+        } else res.sendStatus(403)
+      } else  res.sendStatus(401)
     } else res.sendStatus(400)
   }).catch((e) => sendInternalError(res, e))
 })

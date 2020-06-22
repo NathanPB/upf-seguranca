@@ -18,7 +18,7 @@ export const create = (token, options) => {
   const api = axios.create({
     baseURL,
     transformResponse: (data) => {
-      if (data === 'Forbidden') {
+      if (data === 'Unauthorized') {
         onTokenInvalid({ token })
       }
 
