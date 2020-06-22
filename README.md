@@ -1,19 +1,14 @@
-# How to run the HTTP API
+# How to run with Docker Compose
 
 1. Clone this repository
-2. Navigate into the ``server`` directory
-3. Create a file named ``.env`` with your PostgreSQL database connection credentials and host (example bellow)
+2. Edit ``docker-compose.yml`` and change the passwords as you want
+3. Run ``docker-compose up --build``
+4. Wait for the application to be deployed
+5. Open your browser and go to ``localhost``
 
-```properties
-DB_HOST=localhost:5432
-DB_USERNAME=the_database_username
-DB_PWD=the_database_password
-DB_NAME=the_database_name
-PORT=8080
-```
+The ports 80 will be used by the webapp and 8080 by the REST API
 
-4. Run ``$ npm install``
-5. Run ``$ npm start``
+At this time you can only change the Webapp port at ``docker-compose.yml``. The web service one is hardcoded
 
 # REST Routes
 
