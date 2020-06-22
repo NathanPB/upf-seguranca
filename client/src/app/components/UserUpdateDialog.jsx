@@ -40,7 +40,13 @@ export default function UserUpdateDialog({ me, userId, api, notify, onCancelled 
 
     api.editUser(userId, editPayload)
       .then(notify)
-      .catch(console.error)
+      .catch((e) => {
+        if (e.response.status === 409) {
+          alert("This e-mail address is already in use")
+        } else {
+          console.error(e)
+        }
+      })
   }
 
   const footer = <div className="p-clearfix" style={{ width: '100%' }}>

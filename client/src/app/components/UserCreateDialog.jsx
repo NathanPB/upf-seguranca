@@ -14,8 +14,6 @@ export default function UserCreateDialog({ api, visible, notify, onCancelled }) 
   const [pwd, setPwd] = React.useState('');
   const [confirmPwd, setConfirmPwd] = React.useState('');
 
-  const formRef = React.useRef();
-
   function handleCancel() {
     setEmail('');
     setPwd('');
@@ -27,7 +25,13 @@ export default function UserCreateDialog({ api, visible, notify, onCancelled }) 
     if (email && pwd && pwd === confirmPwd) {
       api.addUser({ email, pwd: String(sha256(pwd)) })
         .then(notify)
-        .catch(console.error)
+        .catch((e) => {
+          if (e.response.status === 409) {
+            alert("This e-mail address is already in use")
+          } else {
+            console.error(e)
+          }
+        })
     }
   }
 

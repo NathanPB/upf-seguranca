@@ -77,9 +77,14 @@ app.post('/user', (req, res) => {
   .then((valid) => {
     if (valid) {
       if (email && pwd) {
-        User.create({ email, pwd })
-          .then((user) => res.send(normalizeUser(user)))
-          .catch((e) => sendInternalError(res, e))
+        User.count({ where: { email } })
+          .then((count) => {
+            if (count === 0) {
+              User.create({ email, pwd })
+              .then((user) => res.send(normalizeUser(user)))
+              .catch((e) => sendInternalError(res, e))
+            } else res.sendStatus(409)
+          }).catch((e) => sendInternalError(res, e))
       } else res.sendStatus(400)
     } else  res.sendStatus(401)
   }).catch((e) => sendInternalError(res, e))
@@ -115,9 +120,14 @@ app.put('/user/:id', (req, res) => {
           if (pwd) {
             updatePayload = { ...updatePayload, pwd }
           }
-          User.update(updatePayload, { where: { id: parseInt(id) } })
-          .then(() => res.sendStatus(200))
-          .catch((e) => sendInternalError(res, e))
+          User.count({ where: { email } })
+            .then((count) => {
+              if (count === 0) {
+                User.update(updatePayload, { where: { id: parseInt(id) } })
+                .then(() => res.sendStatus(200))
+                .catch((e) => sendInternalError(res, e))
+              } else res.sendStatus(409)
+            }).catch((e) => sendInternalError(res, e))
         } else res.sendStatus(403)
       } else  res.sendStatus(401)
     } else res.sendStatus(400)
