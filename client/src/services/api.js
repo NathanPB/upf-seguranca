@@ -38,11 +38,11 @@ export const create = (token, options) => {
 
   const users = () => api.get('/user')
 
-  const addUser = (userData) => api.post('/user', { headers: userData })
+  const addUser = (userData) => api.post('/user', undefined, { headers: userData })
 
   const removeUser = (id) => api.delete(`/user/${id}`)
 
-  const editUser = (id, userData) => api.put(`/user/${id}`, { headers: userData })
+  const editUser = (id, userData) => api.put(`/user/${id}`, undefined, { headers: userData })
 
   const getUser = (id) => api.get(`/user/${id}`)
 
