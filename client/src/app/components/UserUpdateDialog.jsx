@@ -75,9 +75,9 @@ export default function UserUpdateDialog({ me, userId, api, notify, onCancelled,
     {
       me.id === userId && (
         <span className="p-float-label">
-              <Password id="pwd" value={pwd} onChange={(e) => setPwd(e.target.value)} />
-              <label htmlFor="pwd">Password</label>
-            </span>
+          <Password id="pwd" value={pwd} onChange={(e) => setPwd(e.target.value)} />
+          <label htmlFor="pwd">Password</label>
+        </span>
       )
     }
     <span className="p-float-label">
