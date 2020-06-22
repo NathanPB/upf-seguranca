@@ -1,0 +1,19 @@
+version: "3.6"
+services:
+  database:
+      build:
+        context: "."
+        dockerfile: "./Dockerfile-database"
+      environment:
+        POSTGRES_PASSWORD: "123"
+      network_mode: "host"
+  webservice:
+      build: "./server"
+      ports:
+      - "8080:8080"
+      environment:
+        DB_HOST: "localhost:5432"
+        DB_USERNAME: "postgres"
+        DB_PWD: "123"
+        DB_NAME: "upf-seguranca"
+      network_mode: "host"

@@ -170,11 +170,30 @@ app.get('/user/:id', (req, res) => {
     }).catch((e) => sendInternalError(res, e))
 })
 
-app.listen(port, () => {
-  Promise.all([
-      sequelize.authenticate(),
-      sequelize.sync()
-  ]).then(() => {
-    console.log(`API Server listening on ${port}`)
-  }).catch(console.error)
+app.listen(port, async () => {
+  let authenticated = false;
+  let attempts = 1;
+  const id = setInterval(async () => {
+    try {
+      console.log(`Attempt ${attempts}: Trying to connect...`)
+      await sequelize.authenticate();
+      authenticated = true;
+    } catch (e) {
+      console.error(e)
+      attempts ++;
+    }
+
+    if (authenticated) {
+      sequelize.sync();
+      clearInterval(id)
+      console.log(`API Server listening on ${port}`)
+    }
+
+    if (attempts >= 10) {
+      console.error(`Giving up of trying to connect to database after ${attempts} attempts`)
+      clearInterval(id)
+    } else {
+      console.warn('Trying again...')
+    }
+  }, 5000)
 })
