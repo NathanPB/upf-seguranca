@@ -8,7 +8,7 @@ import Styles from './UserUpdateDialog.module.scss';
 import {InputText} from 'primereact/inputtext';
 import {Password} from 'primereact/password';
 
-export default function UserCreateDialog({ api, visible, notify, onCancelled }) {
+export default function UserCreateDialog({ api, visible, notify, onCancelled, requestNotification }) {
 
   const [email, setEmail] = React.useState('');
   const [pwd, setPwd] = React.useState('');
@@ -21,15 +21,20 @@ export default function UserCreateDialog({ api, visible, notify, onCancelled }) 
     onCancelled();
   }
 
+  function handleError(e) {
+    console.error(e);
+    requestNotification({ severity: 'error', summary: 'Something went wrong', detail: 'Try Again Later' })
+  }
+
   function handleCreate() {
     if (email && pwd && pwd === confirmPwd) {
       api.addUser({ email, pwd: String(sha256(pwd)) })
         .then(notify)
         .catch((e) => {
           if (e.response.status === 409) {
-            alert("This e-mail address is already in use")
+            requestNotification({ severity: 'error', summary: 'Failed to save changes', detail: 'This e-mail address is already in use' })
           } else {
-            console.error(e)
+            handleError(e)
           }
         })
     }

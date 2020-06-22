@@ -8,12 +8,17 @@ import {ProgressSpinner} from 'primereact/progressspinner';
 
 import Styles from './UserUpdateDialog.module.scss';
 
-export default function UserUpdateDialog({ me, userId, api, notify, onCancelled }) {
+export default function UserUpdateDialog({ me, userId, api, notify, onCancelled, requestNotification }) {
 
   const [isLoading, setLoading] = React.useState(true);
   const [email, setEmail] = React.useState();
   const [createdAt, setCreatedAt] = React.useState();
   const [pwd, setPwd] = React.useState('');
+
+  function handleError(e) {
+    console.error(e);
+    requestNotification({ severity: 'error', summary: 'Something went wrong', detail: 'Try Again Later' })
+  }
 
   React.useEffect(() => {
     api.getUser(userId)
@@ -22,13 +27,15 @@ export default function UserUpdateDialog({ me, userId, api, notify, onCancelled 
         setEmail(email)
         setCreatedAt(createdAt)
         setLoading(false)
-      }).catch(console.error)
+      }).catch(handleError)
   }, [api, userId])
 
   function handleDelete() {
     api.removeUser(userId)
-      .then(notify)
-      .catch(console.error)
+      .then(() => {
+        notify()
+        requestNotification({ severity: 'warn', summary: 'User Removed Successfully'})
+      }).catch(handleError)
   }
 
   function handleEdit() {
@@ -39,12 +46,14 @@ export default function UserUpdateDialog({ me, userId, api, notify, onCancelled 
     }
 
     api.editUser(userId, editPayload)
-      .then(notify)
-      .catch((e) => {
+      .then(() => {
+        notify()
+        requestNotification({ severity: 'success', summary: 'Changes Saved Successfully'})
+      }).catch((e) => {
         if (e.response.status === 409) {
-          alert("This e-mail address is already in use")
+          requestNotification({ severity: 'error', summary: 'Failed to save changes', detail: 'This e-mail address is already in use' })
         } else {
-          console.error(e)
+          handleError(e)
         }
       })
   }

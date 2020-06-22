@@ -8,10 +8,12 @@ import {Column} from 'primereact/column';
 import {Calendar} from 'primereact/calendar';
 import UserUpdateDialog from '../components/UserUpdateDialog';
 import UserCreateDialog from '../components/UserCreateDialog';
+import {Growl} from 'primereact/growl';
 
 export default function HomeScreen({ api }) {
 
   const tableRef = React.useRef();
+  const growl = React.useRef();
 
   const [me, setMe] = React.useState({});
   const [users, setUsers] = React.useState();
@@ -35,6 +37,10 @@ export default function HomeScreen({ api }) {
     api.users()
     .then(({ data }) => setUsers(JSON.parse(data)))
     .catch(console.error)
+  }
+
+  function onNotificationRequested(e) {
+    growl.current && growl.current.show(e)
   }
 
   function handleRecheckToken() {
@@ -142,28 +148,33 @@ export default function HomeScreen({ api }) {
         userId={editing}
         api={api}
         notify={onNotified}
+        requestNotification={onNotificationRequested}
         onCancelled={() => setEditing(undefined)}
       />
     )
   }
 
   return (
-    <section className={Styles.HomeScreen}>
-      <Menubar model={menuItems}>
-        <span>Hello, {email}</span>
-      </Menubar>
-      <section className={Styles.PageBody}>
-        <span style={{ color: 'white' }}>Tip: Click in the rows to edit a user</span>
-        { isLoading && <ProgressSpinner/> }
-        { !isLoading && renderTable() }
-        { editing && renderEditDialog() }
-        <UserCreateDialog
-          api={api}
-          visible={creating}
-          notify={onNotified}
-          onCancelled={() => setCreating(false)}
-        />
+    <>
+      <Growl ref={growl}/>
+      <section className={Styles.HomeScreen}>
+        <Menubar model={menuItems}>
+          <span>Hello, {email}</span>
+        </Menubar>
+        <section className={Styles.PageBody}>
+          <span style={{ color: 'white' }}>Tip: Click in the rows to edit a user</span>
+          { isLoading && <ProgressSpinner/> }
+          { !isLoading && renderTable() }
+          { editing && renderEditDialog() }
+          <UserCreateDialog
+            api={api}
+            visible={creating}
+            notify={onNotified}
+            requestNotification={onNotificationRequested}
+            onCancelled={() => setCreating(false)}
+          />
+        </section>
       </section>
-    </section>
+    </>
   );
 }
