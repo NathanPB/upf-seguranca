@@ -14,6 +14,12 @@ At this time you can only change the Webapp port at ``docker-compose.yml``. The 
 
 The default user shipped within the Docker containers has the email of ``admin@admin.com`` and the password of ``admin``. You probably want to change that.
 
+# Specific Business Rules
+
+- A user can delete only its own account, not other user's account
+- A user can change only its own password, not other user's password
+- Everyone can change everyone's email (I know this is weirdo, but its just a demo for the CRUD)
+
 # REST Routes
 
 - **POST** ``/auth`` | **Required Headers**: ``Authorization: email password``
