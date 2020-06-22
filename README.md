@@ -10,6 +10,10 @@ The ports 80 will be used by the webapp and 8080 by the REST API
 
 At this time you can only change the Webapp port at ``docker-compose.yml``. The web service one is hardcoded
 
+# Default Login
+
+The default user shipped within the Docker containers has the email of ``admin@admin.com`` and the password of ``admin``. You probably want to change that.
+
 # REST Routes
 
 - **POST** ``/auth`` | **Required Headers**: ``Authorization: email password``
