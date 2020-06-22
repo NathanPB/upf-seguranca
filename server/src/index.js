@@ -95,8 +95,8 @@ app.delete('/user/:id', (req, res) => {
   extractAndValidateToken(req)
   .then((valid) => {
     if (id && !isNaN(id)) {
-      // Makes the user able to alter only his own password if the pwd parameter is passed
-      if (valid && parseInt(id) === valid) {
+      // Makes the user able to delete only its own account
+      if (valid) {
         if (parseInt(id) === valid) {
           User.destroy({ where: { id: parseInt(id) } })
           .then(() => res.sendStatus(200))
