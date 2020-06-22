@@ -68,7 +68,7 @@ export default function UserUpdateDialog({ me, userId, api, notify, onCancelled,
           <InputText id="id" value={userId} readOnly/>
           <label htmlFor="id">Id</label>
         </span>
-    <span className="p-float-label">
+        <span className="p-float-label">
           <InputText id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value) } required />
           <label htmlFor="email">Email</label>
         </span>
