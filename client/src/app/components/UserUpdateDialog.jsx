@@ -23,7 +23,7 @@ export default function UserUpdateDialog({ me, userId, api, notify, onCancelled,
   React.useEffect(() => {
     api.getUser(userId)
       .then(({ data }) => {
-        const { email, createdAt } = JSON.parse(data);
+        const { email, createdAt } = data;
         setEmail(email)
         setCreatedAt(createdAt)
         setLoading(false)

@@ -31,11 +31,11 @@ export default function HomeScreen({ api }) {
     setCreating(false);
 
     api.me()
-    .then(({ data }) => setMe(JSON.parse(data)))
+    .then(({ data }) => setMe(data))
     .catch(console.error)
 
     api.users()
-    .then(({ data }) => setUsers(JSON.parse(data)))
+    .then(({ data }) => setUsers(data))
     .catch(console.error)
   }
 
@@ -43,11 +43,24 @@ export default function HomeScreen({ api }) {
     growl.current && growl.current.show(e)
   }
 
+  function handleError(e) {
+    onNotificationRequested({ severity: 'error', summary: 'Something went wrong. Try again later' })
+    console.error(e)
+  }
+
   function handleRecheckToken() {
     api.isTokenValid()
       .then((valid) => {
         alert(valid ? "Your token still valid!" : "Your token is not valid anymore")
-      }).catch(console.error)
+      }).catch(handleError)
+  }
+
+  function handleAskDeleteSelf() {
+    if (window.confirm("Are you sure you want to delete your own account?")) {
+      api.removeUser(me.id)
+        .then(handleRecheckToken)
+        .catch(handleError)
+    }
   }
 
   React.useEffect(() => {
@@ -66,6 +79,11 @@ export default function HomeScreen({ api }) {
       label: 'Register New User',
       icon: 'pi pi-plus',
       command: () => setCreating(true)
+    },
+    {
+      label: 'Delete My Account',
+      icon: 'pi pi-trash',
+      command: handleAskDeleteSelf
     }
   ]
 

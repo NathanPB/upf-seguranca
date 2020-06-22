@@ -17,16 +17,16 @@ export const create = (token, options) => {
 
   const api = axios.create({
     baseURL,
-    transformResponse: (data) => {
-      if (data === 'Unauthorized') {
-        onTokenInvalid({ token })
-      }
-
-      return data;
-    },
     headers: {
       Authorization: token
     }
+  })
+
+  api.interceptors.response.use(undefined, (error) => {
+    if (error.response.status === 401 && onTokenInvalid) {
+      onTokenInvalid(token)
+    }
+    return Promise.reject(error)
   })
 
   const me = () => api.get('/user/me')
