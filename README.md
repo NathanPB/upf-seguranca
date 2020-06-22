@@ -3,7 +3,7 @@
 1. Clone this repository
 2. Edit ``docker-compose.yml`` and change the passwords as you want
 3. Run ``docker-compose up --build``
-4. Wait for the application to be deployed
+4. Wait for the application to be deployed. It will take some time depending of your internet connection and CPU power
 5. Open your browser and go to ``localhost``
 
 The ports 80 will be used by the webapp and 8080 by the REST API
