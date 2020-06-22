@@ -14,6 +14,8 @@ At this time you can only change the Webapp port at ``docker-compose.yml``. The 
 
 The default user shipped within the Docker containers has the email of ``admin@admin.com`` and the password of ``admin``. You probably want to change that.
 
+If you don't want to run with Docker or want to run with another database container, insert a row in the ``users`` table. The ``pwd`` should be hashed with **sha256**. Pay attention on the default SQL's crypto functions, the conversion to varchar inserts a prefix within the hash that will invalidate the authentication.
+
 # Specific Business Rules
 
 - A user can delete only its own account, not other user's account
