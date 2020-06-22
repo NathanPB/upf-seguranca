@@ -107,6 +107,7 @@ app.delete('/user/:id', (req, res) => {
   }).catch((e) => sendInternalError(res, e))
 })
 
+// TODO this is hell, refactor this shit
 app.put('/user/:id', (req, res) => {
   const { id } = req.params;
   const { email, pwd } = req.headers;
@@ -120,7 +121,10 @@ app.put('/user/:id', (req, res) => {
           if (pwd) {
             updatePayload = { ...updatePayload, pwd }
           }
-          User.count({ where: { email } })
+          // Let the request succeed if the user attempt to keep **his** old e-mail
+          // But block if the requested if the email already exists and **does not** belongs
+          // to the requested user ID
+          User.count({ where: { email, id: { [Op.ne]: id }} })
             .then((count) => {
               if (count === 0) {
                 User.update(updatePayload, { where: { id: parseInt(id) } })
