@@ -7,6 +7,7 @@ import {ProgressSpinner} from 'primereact/progressspinner';
 import {Column} from 'primereact/column';
 import {Calendar} from 'primereact/calendar';
 import UserUpdateDialog from '../components/UserUpdateDialog';
+import UserCreateDialog from '../components/UserCreateDialog';
 
 export default function HomeScreen({ api }) {
 
@@ -16,6 +17,7 @@ export default function HomeScreen({ api }) {
   const [users, setUsers] = React.useState();
 
   const [editing, setEditing] = React.useState();
+  const [creating, setCreating] = React.useState(false);
 
   const [datesFilter, setDatesFilter] = React.useState([]);
 
@@ -24,6 +26,7 @@ export default function HomeScreen({ api }) {
   // TODO find out why this is not automatically parsing the json string
   function onNotified() {
     setEditing(undefined)
+    setCreating(false);
 
     api.me()
     .then(({ data }) => setMe(JSON.parse(data)))
@@ -52,6 +55,11 @@ export default function HomeScreen({ api }) {
       icon: 'pi pi-refresh',
       command: handleRecheckToken,
       style: { background: 'var(--primaryColor)' }
+    },
+    {
+      label: 'Register New User',
+      icon: 'pi pi-plus',
+      command: () => setCreating(true)
     }
   ]
 
@@ -149,6 +157,12 @@ export default function HomeScreen({ api }) {
         { isLoading && <ProgressSpinner/> }
         { !isLoading && renderTable() }
         { editing && renderEditDialog() }
+        <UserCreateDialog
+          api={api}
+          visible={creating}
+          notify={onNotified}
+          onCancelled={() => setCreating(false)}
+        />
       </section>
     </section>
   );

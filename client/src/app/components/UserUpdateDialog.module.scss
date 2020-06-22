@@ -1,5 +1,11 @@
 .UserUpdateDialog {
   :global(.p-float-label) {
-    margin: 1.5em 0;
+    margin: .75em 0 1.5em;
+  }
+
+  .FormErrorMessage {
+    color: red;
+    position: relative;
+    top: -1.25em;
   }
 }
