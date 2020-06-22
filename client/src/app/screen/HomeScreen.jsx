@@ -6,6 +6,7 @@ import Styles from './HomeScreen.module.scss';
 import {ProgressSpinner} from 'primereact/progressspinner';
 import {Column} from 'primereact/column';
 import {Calendar} from 'primereact/calendar';
+import UserUpdateDialog from '../components/UserUpdateDialog';
 
 export default function HomeScreen({ api }) {
 
@@ -14,18 +15,24 @@ export default function HomeScreen({ api }) {
   const [me, setMe] = React.useState({});
   const [users, setUsers] = React.useState();
 
+  const [editing, setEditing] = React.useState();
+
   const [datesFilter, setDatesFilter] = React.useState([]);
 
+  React.useEffect(onNotified, [])
+
   // TODO find out why this is not automatically parsing the json string
-  React.useEffect(() => {
+  function onNotified() {
+    setEditing(undefined)
+
     api.me()
-      .then(({ data }) => setMe(JSON.parse(data)))
-      .catch(console.error)
+    .then(({ data }) => setMe(JSON.parse(data)))
+    .catch(console.error)
 
     api.users()
-      .then(({ data }) => setUsers(JSON.parse(data)))
-      .catch(console.error)
-  }, [])
+    .then(({ data }) => setUsers(JSON.parse(data)))
+    .catch(console.error)
+  }
 
   function handleRecheckToken() {
     api.isTokenValid()
@@ -86,7 +93,20 @@ export default function HomeScreen({ api }) {
 
   function renderTable() {
     return (
-      <DataTable value={users} ref={tableRef} emptyMessage="No Users Found">
+      <DataTable
+        value={users}
+        ref={tableRef}
+        emptyMessage="No Users Found"
+        onRowClick={({ data }) => setEditing(data.id)}
+      >
+        <Column
+          field="id"
+          header="Id"
+          filterPlaceholder="Search by Id"
+          filterMatchMode="equals"
+          sortable
+          filter
+        />
         <Column
           field="email"
           header="Email"
@@ -107,14 +127,28 @@ export default function HomeScreen({ api }) {
     )
   }
 
+  function renderEditDialog() {
+    return (
+      <UserUpdateDialog
+        me={me}
+        userId={editing}
+        api={api}
+        notify={onNotified}
+        onCancelled={() => setEditing(undefined)}
+      />
+    )
+  }
+
   return (
     <section className={Styles.HomeScreen}>
       <Menubar model={menuItems}>
         <span>Hello, {email}</span>
       </Menubar>
       <section className={Styles.PageBody}>
+        <span style={{ color: 'white' }}>Tip: Click in the rows to edit a user</span>
         { isLoading && <ProgressSpinner/> }
         { !isLoading && renderTable() }
+        { editing && renderEditDialog() }
       </section>
     </section>
   );
